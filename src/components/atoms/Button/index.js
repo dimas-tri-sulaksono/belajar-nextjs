@@ -1,11 +1,16 @@
-function Button(props) {
+function Button({ buttonClassName, type, children, onClick = () => {} }) {
   return (
     <button
-      className={`h-10 px-6 font-semibold text-white ${props.buttonClassName}`}
+      onClick={onClick}
+      type={type}
+      className={`h-10 px-6 font-semibold text-white ${buttonClassName}`}
     >
-      {props.children}
+      {children}
     </button>
   );
 }
 
 export default Button;
+
+// fungsi kosong, fungsi yang tidak melakukan apa-apa
+// onClick = () => {} }
