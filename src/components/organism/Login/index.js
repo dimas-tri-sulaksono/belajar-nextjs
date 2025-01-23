@@ -23,13 +23,6 @@ const Login = () => {
         Login
       </Button>
 
-      <p className="text-sm text-center mt-2">
-        Do not have an account?{" "}
-        <Link className="text-blue-500 hover:text-blue-700" href="/register">
-          Register
-        </Link>
-      </p>
-
       {/* kalau pakai <a href></a> ada loadingnya */}
       {/* gunakan <Link></Link sebagai penganti a href tanpa loading page  */}
     </form>

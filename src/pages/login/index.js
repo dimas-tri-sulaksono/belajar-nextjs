@@ -6,7 +6,11 @@ const index = () => {
   return (
     <>
       <div className="flex justify-center items-center min-h-screen">
-        <AuthLayout title={"Login"} desc={"Hi, please login to your account"}>
+        <AuthLayout
+          title={"Login"}
+          desc={"Hi, please login to your account"}
+          type={"login"}
+        >
           <Login />
         </AuthLayout>
       </div>
