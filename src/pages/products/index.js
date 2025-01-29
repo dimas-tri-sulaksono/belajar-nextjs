@@ -1,7 +1,7 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { data } from "@/constant/products";
 import BackToTopButton from "@/components/atoms/icons/BackToTopButton";
 import Icons from "@/components/atoms/icons";
@@ -54,15 +54,25 @@ const ProductPage = () => {
   };
   // console.log(cart);
 
+  /** useMemo : hooks buat nyimpen hasil komputasi (perhitungan) yang kompleks ke dalam cache,
+   *  tujuannya biar fungsi tersebut ngga perlu dijalananin/dihitung ulang ketika tidak ada perubahan pada state
+   */
+  const cartTotal = useMemo(() => {
+    return cart.reduce((total, item) => {
+      const product = data.find((product) => product.id === item.id);
+      return total + product.price * item.qty;
+    }, 0);
+  }, [cart]); // dependency array untuk memantau perubahan array
+
   useEffect(() => {
     if (cart.length > 0) {
-      const sumTotal = cart.reduce((total, item) => {
-        const product = data.find((product) => product.id === item.id);
-        return total + product.price * item.qty;
-      }, 0);
-      setTotal(sumTotal);
-      //
-      localStorage.setItem("cart", JSON.stringify(cart));
+      // const sumTotal = cart.reduce((total, item) => {
+      //   const product = data.find((product) => product.id === item.id);
+      //   return total + product.price * item.qty;
+      // }, 0);
+      // setTotal(sumTotal);
+      // //
+      // localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart]);
 
@@ -186,7 +196,7 @@ const ProductPage = () => {
 
             <div className="flex justify-between px-4 py-2 border mt-2 font-semibold rounded-lg">
               <span>Total</span>
-              <span>{total}</span>
+              <span>{cartTotal}</span>
             </div>
           </div>
         )}
