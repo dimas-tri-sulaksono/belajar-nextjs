@@ -1,8 +1,10 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { data } from "@/constant/products";
+import BackToTopButton from "@/components/atoms/icons/BackToTopButton";
+import Icons from "@/components/atoms/icons";
 
 // contoh data dari API/BE
 
@@ -11,10 +13,14 @@ const ProductPage = () => {
   const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState([]);
+  const footerRef = useRef();
+  const [ShowBackToTop, setShowBackToTop] = useState(false);
 
+  /** useRef : hooks untuk membuat referensi ke elemen DOM/fungsi untuk mengakses elemen DOM
+   */
   // ngga bisa pakai cara biasa kayak ini
-  let name = "danu";
-  name = "dani";
+  // let name = "danu";
+  // name = "dani";
 
   // useEffect untuk menangani side effect dari perubahan suatu data yang dijalankan tiap kali halaman dimuat (loading)
   useEffect(() => {
@@ -73,6 +79,42 @@ const ProductPage = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("password");
     window.location.href = "/login";
+  }
+
+  useEffect(() => {
+    function handleScroll() {
+      // ambil nilai offsetTop (posisi vertikal) dari elemen footer yang direferensikan oleh footerRef
+      const footerTop = footerRef.current.offsetTop; // ambil batas atas komponen
+
+      // ambil tinggi dari iinerHeight dari object window (tinggi viewport tanpa toolbar dan scrollbar)
+      const viewportHeight = window.innerHeight;
+
+      // ambil nilai scrollY dari object window (posisi scroll vertika [sumbu Y] di layar)
+      const scrollPosition = window.scrollY;
+
+      // logic untuk mengecek apakah posisi scroll di layar telah mencapai elemen footer
+      if (scrollPosition + viewportHeight >= footerTop) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    }
+    // event listener untuk menjalankan fungsi handleScroll setiap event scroll terjadi
+    window.addEventListener("scroll", handleScroll);
+
+    // unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [footerRef]); // jalanin side effect ini tiap kali nilai footerRef berubah
+
+  function handleBackToTop() {
+    //balikin scroll ke atas dengan animasi smooth
+    // window.scrollTo({ top: 0, behavior: "smooth" });
+
+    setTimeout(() => {
+      document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+    }, 0);
   }
 
   return (
@@ -149,6 +191,22 @@ const ProductPage = () => {
           </div>
         )}
       </div>
+
+      {/* footer */}
+      {ShowBackToTop && (
+        <div
+          onClick={handleBackToTop}
+          className=" text-white fixed bottom-20 right-5 bg-gradient-aigen-hover rounded-full p-3"
+        >
+          <Icons.DoubleArrowUp />
+        </div>
+      )}
+      <footer
+        ref={footerRef}
+        className="text-center p-5 bg-black text-white w-full"
+      >
+        All right reserved &copy; || by Dimas
+      </footer>
     </>
   );
 };
