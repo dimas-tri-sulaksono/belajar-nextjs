@@ -261,15 +261,16 @@ const ProductPage = ({ data }) => {
 export async function getStaticProps() {
   try {
     // cara pertama untuk manggil service satu persatu
-    // const products = await getProducts();
+    const products = await getProducts();
 
     // cara kedua kalau mau manggil beberpa service sekaligus pakai promise
-    const [products, user] = await Promise.all([getProducts(), getUser()]);
-    const sliceProducts = products.slice(0, 8);
+    // const [products, user] = await Promise.all([getProducts(), getUser()]);
+    // const sliceProducts = products.slice(0, 8);
 
     return {
       props: {
-        data: scliceProducts || [],
+        // data: sliceProducts || [],
+        data: products || [],
       },
       revalidate: 60, // <- fungsi untuk merefresh / mengupdate data setelah 60 detik
     };
