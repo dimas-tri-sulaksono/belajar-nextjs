@@ -19,7 +19,7 @@ import { formatCurrency } from "@/helper/util/formatCurrency";
 
 // contoh data dari API/BE
 
-const ProductPage = () => {
+const ProductPage = ({ data }) => {
   //useState sebutan variable di react (digunakan untuk data yang dinamis)
   // const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
@@ -33,20 +33,7 @@ const ProductPage = () => {
   const [ShowBackToTop, setShowBackToTop] = useState(false);
   /** useRef : hooks untuk membuat referensi ke elemen DOM/fungsi untuk mengakses elemen DOM*/
 
-  const [data, setData] = useState([]);
-
-  // useEffeft untuk mengambil dari API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        setData(data.slice(0, 9));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchProducts();
-  }, []);
+  // const [data, setData] = useState([]);
 
   // useEffect untuk menangani side effect dari perubahan suatu data yang dijalankan tiap kali halaman dimuat (loading)
   useEffect(() => {
@@ -182,7 +169,7 @@ const ProductPage = () => {
             products
           </h1>
           <div className="flex flex-wrap gap-4">
-            {data.map((item) => (
+            {data?.map((item) => (
               <CardProduct key={item.id}>
                 <CardProduct.Header image={item.image} />
                 <CardProduct.Body title={item.title} desc={item.description} />
@@ -265,5 +252,24 @@ const ProductPage = () => {
     </>
   );
 };
+
+export async function getServerSideProps() {
+  try {
+    // cara pertama untuk manggil service satu persatu
+    const products = await getProducts();
+
+    // cara kedua kalau mau manggil beberpa service sekaligus pakai promise
+    // const [products2, user] = await Promise.all([getProducts(), getUser()]);
+    const sliceProducts = products.slice(0, 8);
+
+    return {
+      props: {
+        data: products || [],
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export default ProductPage;
