@@ -12,6 +12,8 @@ import { data } from "@/constant/products";
 import BackToTopButton from "@/components/atoms/icons/BackToTopButton";
 import Icons from "@/components/atoms/icons";
 import { getProducts } from "@/services/products";
+import { getCurrentUser } from "@/services/auth";
+import { useRouter } from "next/router";
 
 // contoh data dari API/BE
 
@@ -21,6 +23,8 @@ const ProductPage = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState([]);
   const footerRef = useRef();
+  const router = useRouter();
+
   const [ShowBackToTop, setShowBackToTop] = useState(false);
   /** useRef : hooks untuk membuat referensi ke elemen DOM/fungsi untuk mengakses elemen DOM*/
 
@@ -39,16 +43,14 @@ const ProductPage = () => {
     fetchProducts();
   }, []);
 
-  // ngga bisa pakai cara biasa kayak ini
-  // let name = "danu";
-  // name = "dani";
-
   // useEffect untuk menangani side effect dari perubahan suatu data yang dijalankan tiap kali halaman dimuat (loading)
   useEffect(() => {
-    const getUsername = localStorage.getItem("username");
+    const token = localStorage.getItem("token");
 
-    if (getUsername) {
-      setUsername(getUsername);
+    if (token) {
+      setUsername(getCurrentUser(token));
+    } else {
+      router.push("/login");
     }
 
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
@@ -122,7 +124,10 @@ const ProductPage = () => {
   function handleLogout() {
     localStorage.removeItem("username");
     localStorage.removeItem("password");
-    window.location.href = "/login";
+    localStorage.removeItem("token");
+    localStorage.removeItem("token");
+
+    router.push("/login");
   }
 
   useEffect(() => {
