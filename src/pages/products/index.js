@@ -1,22 +1,15 @@
 import Button from "@/components/atoms/Button";
 import CardProduct from "@/components/molecules/CardProduct";
 import Image from "next/image";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { data } from "@/constant/products";
-import BackToTopButton from "@/components/atoms/icons/BackToTopButton";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Icons from "@/components/atoms/icons";
 import { getProducts } from "@/services/products";
-import { getCurrentUser } from "@/services/auth";
 import { useRouter } from "next/router";
 import { useLogin } from "@/hooks/useLogin";
 import { formatCurrency } from "@/helper/util/formatCurrency";
-import { revalidateTag } from "next/cache";
+import { useDispatch, useSelector } from "react-redux";
+import { getCurrentUser } from "@/services/auth";
+import { setIsLargeScreen, setUsername } from "@/redux/screenSlice/screenSlice";
 
 // contoh data dari API/BE
 
@@ -24,12 +17,27 @@ const ProductPage = ({ data }) => {
   //useState sebutan variable di react (digunakan untuk data yang dinamis)
   // const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
-  const [total, setTotal] = useState([]);
   const footerRef = useRef();
   const router = useRouter();
 
+  const dispatch = useDispatch(); // untuk ngirim perubahan ke state global / akses state global di store
+  const { isLargeScreen, username } = useSelector((state) => state.screen);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    //validasi token, cek kalo ngga ada token balikin ke login
+    if (token) {
+      dispatch(setUsername(getCurrentUser(token))); // contoh
+    } else {
+      router.push("/login");
+      console.log("wallala : ", dispatch(setIsLargeScreen));
+      console.log("wallala2 : ", dispatch(setUsername));
+    }
+  });
+
   // manggil custome hooks
-  const username = useLogin();
+  // const username = useLogin();
 
   const [ShowBackToTop, setShowBackToTop] = useState(false);
   /** useRef : hooks untuk membuat referensi ke elemen DOM/fungsi untuk mengakses elemen DOM*/
@@ -156,6 +164,11 @@ const ProductPage = ({ data }) => {
     <>
       <div className="flex justify-between bg-black text-white font-bold px-5 py-4">
         <h1 className="text-xl">Hi, {username}</h1>
+        {isLargeScreen ? (
+          <p className="text-lg">Desktop</p>
+        ) : (
+          <p className="text-lg">Mobile</p>
+        )}
         <Button
           onClick={handleLogout}
           buttonClassName={"bg-red-500 hover:bg-red-700"}
@@ -261,15 +274,16 @@ const ProductPage = ({ data }) => {
 export async function getStaticProps() {
   try {
     // cara pertama untuk manggil service satu persatu
-    // const products = await getProducts();
+    const products = await getProducts();
 
     // cara kedua kalau mau manggil beberpa service sekaligus pakai promise
-    const [products, user] = await Promise.all([getProducts(), getUser()]);
-    const sliceProducts = products.slice(0, 8);
+    // const [products, user] = await Promise.all([getProducts(), getUser()]);
+    // const sliceProducts = products.slice(0, 8);
 
     return {
       props: {
-        data: scliceProducts || [],
+        // data: sliceProducts || [],
+        data: products || [],
       },
       revalidate: 60, // <- fungsi untuk merefresh / mengupdate data setelah 60 detik
     };
