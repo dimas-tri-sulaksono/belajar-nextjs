@@ -14,16 +14,21 @@ import Icons from "@/components/atoms/icons";
 import { getProducts } from "@/services/products";
 import { getCurrentUser } from "@/services/auth";
 import { useRouter } from "next/router";
+import { useLogin } from "@/hooks/useLogin";
+import { formatCurrency } from "@/helper/util/formatCurrency";
 
 // contoh data dari API/BE
 
 const ProductPage = () => {
   //useState sebutan variable di react (digunakan untuk data yang dinamis)
-  const [username, setUsername] = useState("");
+  // const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState([]);
   const footerRef = useRef();
   const router = useRouter();
+
+  // manggil custome hooks
+  const username = useLogin();
 
   const [ShowBackToTop, setShowBackToTop] = useState(false);
   /** useRef : hooks untuk membuat referensi ke elemen DOM/fungsi untuk mengakses elemen DOM*/
@@ -45,14 +50,7 @@ const ProductPage = () => {
 
   // useEffect untuk menangani side effect dari perubahan suatu data yang dijalankan tiap kali halaman dimuat (loading)
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      setUsername(getCurrentUser(token));
-    } else {
-      router.push("/login");
-    }
-
+    // ambil data dari localStorage lalu parsing, tambahin login
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []);
   /** ^ dependensi array : jika kosong, untuk memastikan kalau useEffect dijalankan tiap kali halaman dimuat
@@ -189,7 +187,8 @@ const ProductPage = () => {
                 <CardProduct.Header image={item.image} />
                 <CardProduct.Body title={item.title} desc={item.description} />
                 <CardProduct.Footer
-                  price={item.price}
+                  // price={item.price}
+                  price={formatCurrency(item.price)}
                   handleAddToCart={handleAddToCart}
                   id={item.id}
                 />
@@ -221,7 +220,12 @@ const ProductPage = () => {
                         <span className="font-bold text-xl line-clamp-1">
                           {datas?.title}
                         </span>
-                        <span className="font-semibold">{datas?.price}</span>
+                        <span className="font-semibold">
+                          {datas?.price.toLocaleString("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                          })}
+                        </span>
                       </div>
                       <div className="flex flex-col justify-center items-center">
                         <span className="mb-1">Qty</span>
@@ -237,7 +241,7 @@ const ProductPage = () => {
 
             <div className="flex justify-between px-4 py-2 border mt-2 font-semibold rounded-lg">
               <span>Total</span>
-              <span>{cartTotal}</span>
+              <span>{formatCurrency(cartTotal, "ja-JP", "JPY")}</span>
             </div>
           </div>
         )}

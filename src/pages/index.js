@@ -1,14 +1,15 @@
+import { useLogin } from "@/hooks/useLogin";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   // anggap state ini nyimpen data yang dikirim dari API
   const [data, setData] = useState(true);
-
   const [isMobile, setIsMobile] = useState({
     width: 0,
     height: 0,
     isMobile: false,
   });
+  const username = useLogin();
 
   /** useState  : hooks react untuk membuat state ke functional component
    *  state     : variable yang dipakai untuk menyimpan data
@@ -75,6 +76,8 @@ export default function Home() {
         >
           change mode
         </button>
+
+        <p>{username}</p>
       </div>
     </>
   );
