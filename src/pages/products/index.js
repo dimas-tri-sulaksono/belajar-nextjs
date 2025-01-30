@@ -16,6 +16,7 @@ import { getCurrentUser } from "@/services/auth";
 import { useRouter } from "next/router";
 import { useLogin } from "@/hooks/useLogin";
 import { formatCurrency } from "@/helper/util/formatCurrency";
+import { revalidateTag } from "next/cache";
 
 // contoh data dari API/BE
 
@@ -253,26 +254,24 @@ const ProductPage = ({ data }) => {
   );
 };
 
-/** SSG atau static site generation adalah teknik yang merender halaman pada saat proses build time (npm run build)
- *  dan halaman websitenya bisa di cache jadi ketika user balik lagi ke halaman tersebut, proses rendernya lebih cepet
- *  teknik ini khusus web yang datanya statis/hardcode/datanya tidak berubah
- *
- *  build time : proses penyiapan aplikasi di sisi server saat di deploy
- *  run time   : proses setelah build di mana aplikasi dijalanin di sisi server/browser
+/** ISR : Incremental Static Regeneration adalah teknik menggabungkan SSR dan SSG,
+ *  di mana halaman akan ditampilkan secara statis namun datanya bisa diupdate secara dinamis
+ *  jika ada perubahan data
  */
 export async function getStaticProps() {
   try {
     // cara pertama untuk manggil service satu persatu
-    const products = await getProducts();
+    // const products = await getProducts();
 
     // cara kedua kalau mau manggil beberpa service sekaligus pakai promise
-    // const [products2, user] = await Promise.all([getProducts(), getUser()]);
+    const [products, user] = await Promise.all([getProducts(), getUser()]);
     const sliceProducts = products.slice(0, 8);
 
     return {
       props: {
-        data: products || [],
+        data: scliceProducts || [],
       },
+      revalidate: 60, // <- fungsi untuk merefresh / mengupdate data setelah 60 detik
     };
   } catch (error) {
     console.log(error);
