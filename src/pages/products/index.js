@@ -253,7 +253,14 @@ const ProductPage = ({ data }) => {
   );
 };
 
-export async function getServerSideProps() {
+/** SSG atau static site generation adalah teknik yang merender halaman pada saat proses build time (npm run build)
+ *  dan halaman websitenya bisa di cache jadi ketika user balik lagi ke halaman tersebut, proses rendernya lebih cepet
+ *  teknik ini khusus web yang datanya statis/hardcode/datanya tidak berubah
+ *
+ *  build time : proses penyiapan aplikasi di sisi server saat di deploy
+ *  run time   : proses setelah build di mana aplikasi dijalanin di sisi server/browser
+ */
+export async function getStaticProps() {
   try {
     // cara pertama untuk manggil service satu persatu
     const products = await getProducts();
