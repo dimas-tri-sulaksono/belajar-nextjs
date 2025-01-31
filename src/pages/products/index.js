@@ -31,8 +31,8 @@ const ProductPage = ({ data }) => {
       dispatch(setUsername(getCurrentUser(token))); // contoh
     } else {
       router.push("/login");
-      console.log("wallala : ", dispatch(setIsLargeScreen));
-      console.log("wallala2 : ", dispatch(setUsername));
+      // console.log("wallala : ", dispatch(setIsLargeScreen));
+      // console.log("wallala2 : ", dispatch(setUsername));
     }
   });
 
@@ -59,11 +59,7 @@ const ProductPage = ({ data }) => {
 
     //logic unruk mengecek kalau produk dengan id yang sama ditambahkan leih dari satu maka akan menambah jumlah qty +1
     if (cart.find((item) => item.id === id)) {
-      setCart(
-        cart.map((item) =>
-          item.id === id ? { ...item, qty: item.qty + 1 } : item
-        )
-      );
+      setCart(cart.map((item) => (item.id === id ? { ...item, qty: item.qty + 1 } : item)));
     } else {
       // jika fungsi cuma sekali ditrigger maka cuma menambahkan satu produk doang ke cart
       setCart([...cart, { id, qty: 1 }]);
@@ -164,28 +160,19 @@ const ProductPage = ({ data }) => {
     <>
       <div className="flex justify-between bg-black text-white font-bold px-5 py-4">
         <h1 className="text-xl">Hi, {username}</h1>
-        {isLargeScreen ? (
-          <p className="text-lg">Desktop</p>
-        ) : (
-          <p className="text-lg">Mobile</p>
-        )}
-        <Button
-          onClick={handleLogout}
-          buttonClassName={"bg-red-500 hover:bg-red-700"}
-        >
+        {isLargeScreen ? <p className="text-lg">Desktop</p> : <p className="text-lg">Mobile</p>}
+        <Button onClick={handleLogout} buttonClassName={"bg-red-500 hover:bg-red-700"}>
           Logout
         </Button>
       </div>
       <div className="flex justify-between px-5 py-8">
         {/* products */}
         <div className="flex flex-col w-3/4">
-          <h1 className="text-3xl font-bold text-blue-500 uppercase mb-4">
-            products
-          </h1>
+          <h1 className="text-3xl font-bold text-blue-500 uppercase mb-4">products</h1>
           <div className="flex flex-wrap gap-4">
             {data?.map((item) => (
               <CardProduct key={item.id}>
-                <CardProduct.Header image={item.image} />
+                <CardProduct.Header image={item.image} link={`/products/${item.id}`} />
                 <CardProduct.Body title={item.title} desc={item.description} />
                 <CardProduct.Footer
                   // price={item.price}
@@ -201,9 +188,7 @@ const ProductPage = ({ data }) => {
         {/* cart */}
         {cart.length > 0 && ( //akan ditampilkan jika cart ada isinya
           <div className="w-1/4">
-            <h1 className="text-3xl font-bold text-blue-500 mb-4 uppercase">
-              Cart
-            </h1>
+            <h1 className="text-3xl font-bold text-blue-500 mb-4 uppercase">Cart</h1>
             <div className="flex flex-col gap-2">
               {cart.map((item) => {
                 const datas = data.find((data) => data.id === item.id);
@@ -218,9 +203,7 @@ const ProductPage = ({ data }) => {
                     />
                     <div className="flex justify-between w-full">
                       <div className="flex flex-col justify-between ml-3">
-                        <span className="font-bold text-xl line-clamp-1">
-                          {datas?.title}
-                        </span>
+                        <span className="font-bold text-xl line-clamp-1">{datas?.title}</span>
                         <span className="font-semibold">
                           {datas?.price.toLocaleString("id-ID", {
                             style: "currency",
@@ -257,10 +240,7 @@ const ProductPage = ({ data }) => {
           <Icons.DoubleArrowUp />
         </div>
       )}
-      <footer
-        ref={footerRef}
-        className="text-center p-5 bg-black text-white w-full"
-      >
+      <footer ref={footerRef} className="text-center p-5 bg-black text-white w-full">
         All right reserved &copy; || by Dimas
       </footer>
     </>
