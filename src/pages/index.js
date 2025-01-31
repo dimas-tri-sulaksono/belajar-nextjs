@@ -1,12 +1,17 @@
+import { isMobileScreenAtom } from "@/atoms/atoms";
 import { useLogin } from "@/hooks/useLogin";
+import { useAtom } from "jotai";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function Home() {
   const [data, setData] = useState(true);
   const username = useLogin();
-  const { isMobileScreen } = useSelector((state) => state.screen);
+  // const { isMobileScreen } = useSelector((state) => state.screen);
   // console.log("mobile : ", isMobileScreen);
+
+  //coba atom
+  const [isMobileScreen] = useAtom(isMobileScreenAtom);
 
   const handleChange = () => {
     // fungsi anonymous yang akan merybah nilai boolean dari true ke false lalu dari false ke true dan seterusnya
@@ -28,9 +33,8 @@ export default function Home() {
         ) : (
           <h1 className="text-6xl font-bold">light</h1>
         )}
-
         {isMobileScreen && (
-          <p className="text-red-500 font-bold text-6xl">TEST</p>
+          <p className="text-3xl font-bold text-red-700">Hello</p>
         )}
         <button
           onClick={handleChange}
