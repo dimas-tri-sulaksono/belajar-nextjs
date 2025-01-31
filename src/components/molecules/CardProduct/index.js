@@ -7,7 +7,7 @@ import React from "react";
  *  komponen ini akan jadi komponen pembungkus untuk children
  */
 
-const CardProduct = ({ children, link }) => {
+const CardProduct = ({ children }) => {
   return (
     <>
       <div className="rounded-lg bg-gradient-aigen shadow-xl p-1">
@@ -17,7 +17,7 @@ const CardProduct = ({ children, link }) => {
   );
 };
 
-function Header({ image }) {
+function Header({ image, link = "#" }) {
   return (
     // <Link href="/products/[id]" as={`/products/${id}`}>
     <Link href={link}>
@@ -32,7 +32,7 @@ function Header({ image }) {
   );
 }
 
-function Body({ title, desc }) {
+function Body({ title, desc, link = "#" }) {
   return (
     <div className="px-5 pb-5">
       <Link href={link}>
